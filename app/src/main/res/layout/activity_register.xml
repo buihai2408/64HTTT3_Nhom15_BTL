@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?colorOnPrimary"
-    android:fitsSystemWindows="true"
     tools:context=".RegisterActivity">
 
     <ImageView
@@ -27,6 +26,7 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
         android:hint="Tài khoản"
+        android:textColorHint="@android:color/holo_blue_dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView">
@@ -47,6 +47,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
         android:hint="Mật khẩu"
+        android:textColorHint="@android:color/holo_blue_dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/usernameLayout">
@@ -67,6 +68,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
         android:hint="Họ tên"
+        android:textColorHint="@android:color/holo_blue_dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordLayout">
@@ -87,6 +89,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
         android:hint="Email"
+        android:textColorHint="@android:color/holo_blue_dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fullnameLayout">

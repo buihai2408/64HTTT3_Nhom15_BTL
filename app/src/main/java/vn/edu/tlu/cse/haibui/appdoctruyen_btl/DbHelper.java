@@ -13,74 +13,20 @@ public class DbHelper {
     String tblname2 = "TheLoai";
     String tblname3 = "User";
     String tblname4 = "FavoriteComics";
-    String tblname5 = "LinkTruyen";
     Context context;
 
     public DbHelper(Context context) {
         this.context = context;
-        createTheLoaiTable();
-        createTruyenTable();
-        createUserTable();
         createFavoriteTable();
-        createLinkTruyenTable();
-    }
-
-    private void createTheLoaiTable() {
-        SQLiteDatabase db = openDB();
-        String query = "CREATE TABLE IF NOT EXISTS " + tblname2 +
-                " (IdCategory INTEGER PRIMARY KEY, " +
-                "NameCategory TEXT NOT NULL, " +
-                "Description TEXT NOT NULL)";
-        db.execSQL(query);
-        closeDB(db);
-    }
-
-    private void createTruyenTable() {
-        SQLiteDatabase db = openDB();
-        String query = "CREATE TABLE IF NOT EXISTS " + tblname +
-                " (Id INTEGER PRIMARY KEY, " +
-                "Name TEXT NOT NULL, " +
-                "Author TEXT, " +
-                "IdCategory INTEGER NOT NULL, " +
-                "Description TEXT, " +
-                "isFavorite INTEGER NOT NULL, " +
-                "imageLink TEXT, " +
-                "numberOfChapter INTEGER, " +
-                "FOREIGN KEY (IdCategory) REFERENCES " + tblname2 + "(IdCategory))";
-        db.execSQL(query);
-        closeDB(db);
-    }
-
-    private void createUserTable() {
-        SQLiteDatabase db = openDB();
-        String query = "CREATE TABLE IF NOT EXISTS " + tblname3 +
-                " (idUser INTEGER PRIMARY KEY, " +
-                "username TEXT NOT NULL, " +
-                "password TEXT NOT NULL, " +
-                "fullname TEXT, " +
-                "email TEXT, " +
-                "role TEXT DEFAULT 'user')";
-        db.execSQL(query);
-        closeDB(db);
     }
 
     private void createFavoriteTable() {
         SQLiteDatabase db = openDB();
-        String query = "CREATE TABLE IF NOT EXISTS " + tblname4 +
-                " (idUser INTEGER, idComic TEXT, PRIMARY KEY (idUser, idComic), " +
-                "FOREIGN KEY (idUser) REFERENCES " + tblname3 + "(idUser), " +
-                "FOREIGN KEY (idComic) REFERENCES " + tblname + "(Id))";
-        db.execSQL(query);
-        closeDB(db);
-    }
-
-    private void createLinkTruyenTable() {
-        SQLiteDatabase db = openDB();
-        String query = "CREATE TABLE IF NOT EXISTS " + tblname5 +
-                " (Id INTEGER NOT NULL, " +
-                "Chap INTEGER NOT NULL, " +
-                "Link TEXT NOT NULL)";
-        db.execSQL(query);
+        String createTable = "CREATE TABLE IF NOT EXISTS " + tblname4 + 
+            " (idUser INTEGER, idComic TEXT, PRIMARY KEY (idUser, idComic), " +
+            "FOREIGN KEY (idUser) REFERENCES " + tblname3 + "(idUser), " +
+            "FOREIGN KEY (idComic) REFERENCES " + tblname + "(Id))";
+        db.execSQL(createTable);
         closeDB(db);
     }
 
@@ -91,7 +37,6 @@ public class DbHelper {
     public void closeDB(SQLiteDatabase db) {
         db.close();
     }
-
 
     // ================= User methods =================
 
@@ -228,7 +173,7 @@ public class DbHelper {
         ContentValues values = new ContentValues();
         values.put("idUser", userId);
         values.put("idComic", comicId);
-
+        
         long result = db.insert(tblname4, null, values);
         closeDB(db);
         return result != -1;
@@ -237,8 +182,8 @@ public class DbHelper {
     // Xóa truyện khỏi danh sách yêu thích
     public boolean removeFavoriteComic(int userId, String comicId) {
         SQLiteDatabase db = openDB();
-        int result = db.delete(tblname4, "idUser=? AND idComic=?",
-                new String[]{String.valueOf(userId), comicId});
+        int result = db.delete(tblname4, "idUser=? AND idComic=?", 
+            new String[]{String.valueOf(userId), comicId});
         closeDB(db);
         return result > 0;
     }
@@ -246,8 +191,8 @@ public class DbHelper {
     // Kiểm tra xem truyện có trong danh sách yêu thích không
     public boolean isFavoriteComic(int userId, String comicId) {
         SQLiteDatabase db = openDB();
-        Cursor cursor = db.query(tblname4, null, "idUser=? AND idComic=?",
-                new String[]{String.valueOf(userId), comicId}, null, null, null);
+        Cursor cursor = db.query(tblname4, null, "idUser=? AND idComic=?", 
+            new String[]{String.valueOf(userId), comicId}, null, null, null);
         boolean exists = cursor.moveToFirst();
         closeDB(db);
         return exists;
@@ -258,8 +203,8 @@ public class DbHelper {
         ArrayList<Comic> favorites = new ArrayList<>();
         SQLiteDatabase db = openDB();
         String query = "SELECT t.* FROM " + tblname + " t " +
-                "INNER JOIN " + tblname4 + " f ON t.Id = f.idComic " +
-                "WHERE f.idUser = ?";
+                      "INNER JOIN " + tblname4 + " f ON t.Id = f.idComic " +
+                      "WHERE f.idUser = ?";
         Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
 
         while (cursor.moveToNext()) {
