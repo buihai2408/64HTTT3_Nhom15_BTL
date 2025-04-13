@@ -34,15 +34,54 @@ public class MyFilterActivity extends AppCompatActivity {
         // Truyền thêm userId và context vào constructor
         adapter = new ComicAdapter(comics_filter, userId, this);
         rvComics.setAdapter(adapter);
-        adapter.getFilter().filter("");
+        
+        // Kiểm tra và lọc theo thể loại
+        if (filter_query != null && !filter_query.isEmpty()) {
+            ArrayList<Comic> filteredComics = checkCategory(filter_query);
+            comics_filter.clear();
+            comics_filter.addAll(filteredComics);
+        }
+        
+        adapter.notifyDataSetChanged();
         rvComics.setLayoutManager(new LinearLayoutManager(MyFilterActivity.this, LinearLayoutManager.VERTICAL, false));
         rvComics.addItemDecoration(new DividerItemDecoration(MyFilterActivity.this, LinearLayoutManager.VERTICAL));
+    }
+
+    private ArrayList<Comic> checkCategory(String filter_query) {
+        ArrayList<Comic> result = new ArrayList<>();
+        DbHelper db = new DbHelper(this);
+        
+        // Lấy danh sách tất cả thể loại
+        ArrayList<ComicCategory> allCategories = db.getAllCategory();
+        
+        // Tạo map để dễ dàng tra cứu id của thể loại
+        java.util.HashMap<String, Integer> categoryMap = new java.util.HashMap<>();
+        for (ComicCategory category : allCategories) {
+            categoryMap.put(category.getNameTag(), category.getId());
+        }
+        
+        // Tách các thể loại từ chuỗi filter_query
+        String[] selectedCategories = filter_query.split(",");
+        
+        // Lọc truyện theo thể loại
+        for (Comic comic : comics_filter) {
+            for (String categoryName : selectedCategories) {
+                // Lấy ID của thể loại từ tên
+                Integer categoryId = categoryMap.get(categoryName);
+                if (categoryId != null && comic.getIdCategory() == categoryId) {
+                    result.add(comic);
+                    break;
+                }
+            }
+        }
+        
+        return result;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
+            getOnBackPressedDispatcher().onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
